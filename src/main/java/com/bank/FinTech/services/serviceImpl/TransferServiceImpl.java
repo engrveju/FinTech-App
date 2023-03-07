@@ -1,5 +1,6 @@
 package com.bank.FinTech.services.serviceImpl;
 
+import com.bank.FinTech.enums.TransactionStatus;
 import com.bank.FinTech.enums.Transactiontype;
 import com.bank.FinTech.exceptions.ErrorException;
 import com.bank.FinTech.exceptions.IncorrectDetailsException;
@@ -65,26 +66,26 @@ public class TransferServiceImpl implements TransferService {
         return getAllBanksResponse.getData();
     }
 
-    @Override
-    public FlwResolveAccountDetails resolveAccount(FlwResolveAccountRequest resolveAccountRequest) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        httpHeaders.add("Authorization", "Bearer " + Constant.AUTHORIZATION);
-
-        HttpEntity<FlwResolveAccountRequest> accountRequestHttpEntity = new HttpEntity<>(resolveAccountRequest, httpHeaders);
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        FlwResolveAccountDetails resolveAccountDetails = restTemplate.exchange(
-                Constant.RESOLVE_ACCOUNT_DETAILS,
-                HttpMethod.POST,
-                accountRequestHttpEntity,
-                FlwResolveAccountDetails.class
-        ).getBody();
-
-        System.out.println(resolveAccountDetails);
-        return resolveAccountDetails;
-    }
+//    @Override
+//    public FlwResolveAccountDetails resolveAccount(FlwResolveAccountRequest resolveAccountRequest) {
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//        httpHeaders.add("Authorization", "Bearer " + Constant.AUTHORIZATION);
+//
+//        HttpEntity<FlwResolveAccountRequest> accountRequestHttpEntity = new HttpEntity<>(resolveAccountRequest, httpHeaders);
+//
+//        RestTemplate restTemplate = new RestTemplate();
+//
+//        FlwResolveAccountDetails resolveAccountDetails = restTemplate.exchange(
+//                Constant.RESOLVE_ACCOUNT_DETAILS,
+//                HttpMethod.POST,
+//                accountRequestHttpEntity,
+//                FlwResolveAccountDetails.class
+//        ).getBody();
+//
+//        System.out.println(resolveAccountDetails);
+//        return resolveAccountDetails;
+//    }
 
     @Override
     public FlwOtherBankTransferResponse initiateOtherBankTransfer(ExternalBankTransferRequest transferRequest) {
@@ -112,7 +113,11 @@ public class TransferServiceImpl implements TransferService {
 
         Transaction transaction = saveTransactions(user, transferRequest);
         transaction.setClientRef(clientRef);
-        transaction.setFlwRef(flwOtherBankTransferResponse.getData().toString());
+        transaction.setSourceBank(user.getWallet().getBankName());
+        transaction.setDestinationBank(flwOtherBankTransferResponse.getData().getBankName());
+//        transaction.setFlwRef(flwOtherBankTransferResponse.getData().toString());
+        transaction.setTransactionStatus(TransactionStatus.SUCCESS);
+        transaction.setDestinationAccountName(flwOtherBankTransferResponse.getData().getFullName());
         transactionRepository.save(transaction);
 
         return flwOtherBankTransferResponse;
@@ -191,7 +196,7 @@ public class TransferServiceImpl implements TransferService {
         Transaction transaction = Transaction.builder()
                 .amount(transferRequest.getAmount())
                 .clientRef(clientReference)
-                .flwRef(clientReference)
+//                .flwRef(clientReference)
                 .narration(transferRequest.getNarration())
                 .destinationAccountNumber(transferRequest.getAccountNumber())
                 .destinationBank(transferRequest.getBankCode())

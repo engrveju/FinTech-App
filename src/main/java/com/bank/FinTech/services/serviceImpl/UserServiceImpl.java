@@ -1,6 +1,7 @@
 package com.bank.FinTech.services.serviceImpl;
 
 import com.bank.FinTech.dto.RegistrationRequestDto;
+import com.bank.FinTech.enums.Role;
 import com.bank.FinTech.enums.UserStatus;
 import com.bank.FinTech.exceptions.EmailAlreadyTakenException;
 import com.bank.FinTech.exceptions.UserNotFoundException;
@@ -18,6 +19,7 @@ import com.bank.FinTech.util.JwtUtil;
 import com.bank.FinTech.util.Util;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,6 +40,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Transactional
 @Builder
+@Slf4j
 public class UserServiceImpl implements UserDetailsService, UsersService {
     private final UsersRepository usersRepository;
 
@@ -57,11 +60,16 @@ public class UserServiceImpl implements UserDetailsService, UsersService {
         boolean passwordMatch = util.validatePassword(registrationRequestDto.getPassword(),
                 registrationRequestDto.getConfirmPassword());
 
+        Optional<Users> checkUser = usersRepository.findByBvn(registrationRequestDto.getBvn());
+        if(checkUser.isPresent()){
+            return "Bvn Already Exists";
+        }
+
         if (userExists) {
-            throw new EmailAlreadyTakenException("Email Already Taken");
+            return "Email Already Taken";
         }
         if (!passwordMatch) {
-            throw new InputMismatchException("Passwords do not match!");
+            return "Passwords do not match!";
         }
 
         registrationRequestDto.setTransactionPin(passwordEncoder
@@ -92,6 +100,8 @@ public class UserServiceImpl implements UserDetailsService, UsersService {
         wallet.setUsers(user1);
         wallet.setBalance(0.00);
         walletRepository.save(wallet);
+
+        log.info("this is the toke {}",token);
         return token;
     }
 
@@ -100,6 +110,7 @@ public class UserServiceImpl implements UserDetailsService, UsersService {
         Users users = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
         users.setEnabled(true);
+        users.setRole(Role.USER);
         users.setUserStatus(UserStatus.ACTIVE);
         usersRepository.save(users);
     }

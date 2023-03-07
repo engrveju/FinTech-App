@@ -25,10 +25,10 @@ public class OtherBankTransferController {
 
         return transferService.getAllBanks();
     }
-    @PostMapping("/otherbank-account-query")
-    public ResponseEntity<FlwResolveAccountDetails> resolveAccountDetails(@RequestBody FlwResolveAccountRequest accountRequest){
-        return new ResponseEntity<>(transferService.resolveAccount(accountRequest), HttpStatus.OK);
-    }
+//    @PostMapping("/otherbank-account-query")
+//    public ResponseEntity<FlwResolveAccountDetails> resolveAccountDetails(@RequestBody FlwResolveAccountRequest accountRequest){
+//        return new ResponseEntity<>(transferService.resolveAccount(accountRequest), HttpStatus.OK);
+//    }
     @PostMapping ("/other-bank")
     public ResponseEntity<FlwOtherBankTransferResponse> processTransfer(@RequestBody ExternalBankTransferRequest transferRequest){
         return new ResponseEntity<>(transferService.initiateOtherBankTransfer(transferRequest), HttpStatus.OK);

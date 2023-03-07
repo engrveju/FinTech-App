@@ -15,7 +15,7 @@ import java.util.List;
 public interface TransferService {
     List<FlwBank> getAllBanks();
 
-    FlwResolveAccountDetails resolveAccount(FlwResolveAccountRequest resolveAccountRequest);
+//    FlwResolveAccountDetails resolveAccount(FlwResolveAccountRequest resolveAccountRequest);
 
     Users retrieveUserDetails();
 

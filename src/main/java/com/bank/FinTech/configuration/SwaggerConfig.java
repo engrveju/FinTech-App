@@ -2,7 +2,6 @@ package com.bank.FinTech.configuration;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
@@ -10,18 +9,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public OpenAPI customizeOpenApi(){
-        final String securitySchemaName = "bearerAuth";
+    public OpenAPI customizeOpenAPI() {
+        final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
-                .info(new Info()
-                        .title("Food Mart App API")
-                        .version("1.1")
-                        .description("Food Mart App API Documentation")
-                )
-                .addSecurityItem(new SecurityRequirement().addList(securitySchemaName))
+                .addSecurityItem(new SecurityRequirement()
+                        .addList(securitySchemeName))
                 .components(new Components()
-                        .addSecuritySchemes(securitySchemaName, new SecurityScheme()
-                                .name(securitySchemaName)
+                        .addSecuritySchemes(securitySchemeName, new SecurityScheme()
+                                .name(securitySchemeName)
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")));

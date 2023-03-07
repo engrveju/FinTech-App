@@ -32,14 +32,19 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public String createUser(RegistrationRequestDto registrationRequestDto) throws JSONException {
+        registrationRequestDto.setEmail(registrationRequestDto.getEmail().toLowerCase());
         boolean isValidEmail = emailValidator.test(registrationRequestDto.getEmail());
         if(!isValidEmail) {
             throw new EmailNotValidException("Email Not Valid");
         }
         String token = userService.registerUser(registrationRequestDto);
 
+        if(token.equalsIgnoreCase("Bvn already Exists")){
+            return "BVN ALREADY EXISTS";
+        }
+
         String link = Constant.EMAIL_VERIFICATION_TOKEN_LINK + token;
-         sendMail(registrationRequestDto.getFirstName(),
+         sendMail(registrationRequestDto.getFirstName().toLowerCase(),
                  registrationRequestDto.getEmail(), link);
         return "Please check your email to verify your account";
     }
