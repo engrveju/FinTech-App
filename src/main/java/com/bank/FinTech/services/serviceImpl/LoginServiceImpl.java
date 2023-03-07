@@ -29,7 +29,6 @@ import java.util.InputMismatchException;
 public class LoginServiceImpl implements LoginService {
     private final AuthenticationManager userAuthenticationManager;
     private final JwtService jwtService;
-//    private final UserDetailsService userService;
     private final UsersRepository usersRepository;
     private final MailServiceImpl mailService;
     private final Util utils;
@@ -38,9 +37,12 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String authenticate(LoginRequestPayload loginDto) throws Exception {
+        loginDto.setEmail(loginDto.getEmail().toLowerCase());
         try {
             userAuthenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
+                    new UsernamePasswordAuthenticationToken(
+                            loginDto.getEmail(),
+                            loginDto.getPassword())
             );
         } catch (AuthenticationException e) {
             throw new UserNotFoundException("Invalid Credentials");

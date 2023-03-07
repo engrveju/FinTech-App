@@ -21,7 +21,13 @@ public class SecurityConfiguration {
   private final String[] WHITE_LISTED_URLS = { "/v2/api-docs/**", "/v3/api-docs/**","/configuration/**",
    "/swagger*/**","/swagger-ui/**","/webjars/**", "/api/v1/customer/signup","/api/v1/customer/verifyRegistration/**",
           "/api/v1/category/**", "/api/v1/subcategory/**", "/api/v1/finalizeTrans/**", "/api/v1/state/**", "/api/v1/products/new-arrivals",
-          "/api/v1/products/best-selling", "/api/v1/customer/resendVerificationToken/**"
+          "/api/v1/products/best-selling", "/api/v1/customer/resendVerificationToken/**",
+          "/swagger-resources/**",
+          "/swagger-ui/**",
+          "/v3/api-docs/**",
+          "/webjars/**",
+          "/v3/**",
+          "api/v1/user/**"
   };
 
 

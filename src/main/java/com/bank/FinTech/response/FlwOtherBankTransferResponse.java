@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class FlwOtherBankTransferResponse {

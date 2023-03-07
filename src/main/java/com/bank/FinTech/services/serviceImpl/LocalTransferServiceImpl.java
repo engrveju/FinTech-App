@@ -66,6 +66,7 @@ public class LocalTransferServiceImpl implements LocalTransferService {
         }
 
         Transaction senderTransaction = new Transaction();
+        Transaction receiverTransaction = new Transaction();
 
 
         try {
@@ -86,18 +87,40 @@ public class LocalTransferServiceImpl implements LocalTransferService {
 
         senderTransaction = Transaction.builder()
                 .amount(localBankTransferDto.getAmount())
-                .destinationAccountName(receiversWallet.getBankName())
+                .destinationAccountName(localBankTransferDto.getBankName())
                 .narration(localBankTransferDto.getNarration())
                 .destinationBank(receiversWallet.getBankName())
                 .destinationAccountNumber(localBankTransferDto.getAccountNumber())
                 .sourceAccountNumber(senderWallet.getAcctNumber())
                 .transactiontype(Transactiontype.DEBIT)
                 .transactionDate(localBankTransferDto.getTransactionDate())
+                .transactionStatus(TransactionStatus.SUCCESS)
+                .users(loggedInUser)
+                .wallet(loggedInUser.getWallet())
                 .sourceBank(senderWallet.getBankName())
                 .clientRef(uuid.toString())
                 .build();
 
         transactionRepository.save(senderTransaction);
+
+        receiverTransaction = Transaction.builder()
+                .amount(localBankTransferDto.getAmount())
+                .destinationAccountName(localBankTransferDto.getBankName())
+                .narration(localBankTransferDto.getNarration())
+                .destinationBank(receiversWallet.getBankName())
+                .destinationAccountNumber(localBankTransferDto.getAccountNumber())
+                .sourceAccountNumber(senderWallet.getAcctNumber())
+                .transactiontype(Transactiontype.CREDIT)
+                .transactionDate(localBankTransferDto.getTransactionDate())
+                .transactionStatus(TransactionStatus.SUCCESS)
+                .users(receiversWallet.getUsers())
+                .wallet(receiversWallet)
+                .sourceBank(senderWallet.getBankName())
+                .clientRef(uuid.toString())
+                .build();
+
+        transactionRepository.save(senderTransaction);
+        transactionRepository.save(receiverTransaction);
 
         return "Transaction successful!";
 

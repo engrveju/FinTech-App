@@ -36,7 +36,7 @@ public class Transaction extends BaseClass{
     private BigDecimal amount;
     private String narration;
     private String clientRef;
-    private String flwRef;
+//    private String flwRef;
     @ManyToOne
     @JoinColumn(name = "wallet_id", referencedColumnName = "id")
     private Wallet wallet;
